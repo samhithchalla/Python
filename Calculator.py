@@ -10,8 +10,10 @@ while ext==1:
     subtraction = n1-n2
     multiplication = n1*n2
     division = n1/n2
+    modulus = n1%n2
+    percentage = (n1/n2)*100
 
-    opr = input("Enter the operation you want to perform (add/sub/mul/div): ")
+    opr = input("Enter the operation you want to perform (add/sub/mul/div/mod/percent): ")
 
     if opr == 'add':
         result = addition
@@ -21,6 +23,10 @@ while ext==1:
         result = multiplication
     elif opr == 'div':
         result = division
+    elif opr == 'mod':
+        result = modulus
+    elif opr == 'percent':
+        result = percentage
 
     print("Result is: ",result)
 
