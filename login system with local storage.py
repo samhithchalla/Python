@@ -40,7 +40,7 @@ def reg(uname,password):
             file.close()
             break
     if exists == True:
-        print("User already exists...")
+        print("User already exists. Login to continue...")
         loginAcct()
     elif exists == False:
         file = open("login_details.txt","a")
