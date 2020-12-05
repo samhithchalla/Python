@@ -68,7 +68,7 @@ def login(uname,password):
 
 def userMenu():
     print("*** Your Personal Diary ***")
-    print("1.Create new file. \n2.Edit existing file.")
+    print("1.Create new file. \n2.Read or Edit existing file.")
     uinp = int(input("Enter your choice: "))
     if uinp == 1:
         createFile()
