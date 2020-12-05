@@ -50,6 +50,7 @@ def reg(uname,password):
         loginAcct()
 
 def login(uname,password):
+    global login
     login = False
     file = open("login_details.txt","r")
     for i in file:
@@ -70,3 +71,13 @@ if __name__ == "__main__":
     print("Welcome to Samhith's Login System...")
 
     menu()
+
+    if login == True:
+        while True:
+            
+            code = input("\nWant to exit (y/n): ")
+            if code=='y':
+                print("Thank you")
+                exit()
+            elif code=='n':
+                continue
