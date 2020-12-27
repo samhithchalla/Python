@@ -1,0 +1,196 @@
+#Python Voice assistant to send whatsapp messages
+
+#This is a simple program to send whatsapp messages without opening manually. Your assistant will do it.
+
+#You can add or remove more validations / rules according to your convenience.
+
+#Requirements:
+#1. Internet Connection
+#2. Python 3 installed
+#3. Working PIP to install required modules
+#4. Whatsapp account (mandatory)
+#5. Login whatsapp using WhatsAppWeb in your browser or you can scan QR code while program is running
+#6. Time (Hrs and Mins) are used to send messages at your set time. Must be minimun 3 minutes ahead from current time.
+
+
+import pywhatkit  #pip install pywhatkit - to send whatsapp message
+import pyttsx3   #pip install pyttsx3 - text to speech
+import speech_recognition as sr   #pip install SpeechRecognition - to detect our voice
+import datetime  #for date and time
+
+
+#Setting up voice
+engine = pyttsx3.init('sapi5')
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[0].id)  #voice[0].id for Male voice and voice[1].id for Female voice
+
+
+
+#replace "name" with your contact name and "number" with contact number
+addBook = {"name":"number", "name2":"number2", "name3":"number3", "name4":"number4"}
+
+
+#Function to make the assistant speak
+def speak(audio):
+    engine.say(audio)
+    engine.runAndWait()
+
+
+#Function to wish the user according to time
+def wishMe(uname):
+    
+    hour = int(datetime.datetime.now().hour)
+    if hour >= 0 and hour<12:
+        speak(f'Good Morning {uname}!')
+    elif hour >=12 and hour<18:
+        speak(f'Good Afternoon {uname}!')
+    else:
+        speak(f'Good Evening {uname}!')
+
+    speak('I am your Assistant. How may I help you?')
+
+
+#Function to take user voice input
+def takeCommand():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Listening...")
+        r.pause_threshold = 1
+        audio = r.listen(source)
+    try:
+        print("Recognizing...")
+        query = r.recognize_google(audio, language="en-in")
+        print(f"You said: {query}\n")
+    except Exception:
+        #print(e)
+        speak("I couldnot understand. Please say that again...")
+        return "None"
+    return query
+
+
+#Funtion that takes Whatsapp Phone-number to send message
+def takePhoneno():
+    phno2 = "None"
+    phno1 = "+91"
+    confrm = "no"
+    while confrm == "no" or phno2 == "None":
+        phno2 = ""
+        speak("Whom should I send message?")
+        name = takeCommand().lower()
+        phno2 = addBook[name]   #Either you can use dictionary or to directly take phone-number as input, replace "addBook[name]" with "takeCommand()"
+        if phno2 == "None":
+            continue
+        else:
+            phno = phno1 + phno2
+
+        speak(f"Please confirm phone number{phno}")
+        confrm = takeCommand().lower()
+        if confrm == "None":
+            continue
+        elif confrm == "yes" or confrm == "confirm":
+            return phno
+        else:
+            continue
+
+
+#Funtion that takes Voice message
+def takeMsg():
+    msg = "None"
+    while msg == "None":
+        speak("What should I say?")
+        msg = takeCommand()
+        if msg != "None":
+            return msg
+        else:
+            continue
+
+
+#Funtion that takes Time in Hours (when the message is to be sent) as voice-input 
+def takeHrs():
+    hrs = "None"
+    tyhr = ""
+    while hrs == "None" or tyhr != int:
+        hrsDict = {"zero":"0", "one":"1", "two":"2", "three":"3", "four":"4", "five":"5", "six":"6", "seven":"7", "eight":"8", "nine":"9",
+                    "ten":"10", "eleven":"11", "twelve":"12", "thirteen":"13", "fourteen":"14", "fifteen":"15", "sixteen":"16", "seventeen":"17", 
+                    "eighteen":"18", "nineteen":"19", "twenty":"20", "twenty one":"21", "twenty two":"22", "twenty three":"23", "twenty four":"24" }
+        speak("At what time in hours should I send message?")
+        hrscmd = takeCommand() #Use 24 hr time format
+        if hrscmd in hrsDict:
+            hrs = int(hrsDict[hrscmd])
+        else:
+            hrs = int(hrscmd)
+        tyhr = type(hrs)
+        if hrs != "None" or tyhr == int:
+            return hrs
+        else:
+            continue
+
+
+#Funtion that takes Time in Minutes (when the message is to be sent) as voice-input 
+def takeMins():
+    mins = "None"
+    tymn = ""
+    while mins == "None" or tymn != int:
+        minsDict = {"zero":"0", "one":"1", "two":"2", "three":"3", "four":"4", "five":"5", "six":"6", "seven":"7", "eight":"8", "nine":"9",
+                    "ten":"10", "eleven":"11", "twelve":"12", "thirteen":"13", "fourteen":"14", "fifteen":"15", "sixteen":"16", "seventeen":"17", 
+                    "eighteen":"18", "nineteen":"19", "twenty":"20", "twenty one":"21", "twenty two":"22", "twenty three":"23", "twenty four":"24",
+                    "twenty five":"25", "twenty six":"26", "twenty seven":"27", "twenty eight":"28", "twenty nine":"29", "thirty":"30", 
+                    "thirty one":"31", "thirty two":"32", "thirty three":"33", "thirty four":"34", "thirty five":"35", "thirty six":"36", "thirty seven":"37", "thirty eight":"38", "thirty nine":"39", "fourty":"40",
+                    "fourty one":"41", "fourty two":"42", "fourty three":"43", "fourty four":"44", "fourty five":"45", "fourty six":"46","fourty seven":"47", "fourty eight":"48", "fourty nine":"49", "fifty":"50",
+                    "fifty one":"51", "fifty two":"52", "fifty three":"53", "fifty four":"54", "fifty five":"55", "fifty six":"56","fifty seven":"57","fifty eight":"58","fifty nine":"59", "sixty":"60" }
+        speak("By how many minutes?")
+        minscmd = takeCommand()
+        if minscmd in minsDict:
+            mins = int(minsDict[minscmd])
+        else:
+            mins = int(minscmd)
+        tymn = type(mins)
+        if mins != "None" or tymn == int:
+            return mins
+        else:
+            continue
+
+
+#Main program execution starts here
+if __name__ == "__main__":
+    
+    speak("Hello...")
+    speak("Welcome to Samhith's Laptop. What should I call you?")
+
+    uname = takeCommand()  #Takes Computer User Name
+
+    while uname == 'None':
+        uname = takeCommand()
+    else:
+        wishMe(uname)
+
+    #Task execution Loop
+    while True:
+        
+        query = takeCommand().lower()   #User input / query
+
+        if "whatsapp message" in query:
+            
+            phno = takePhoneno()
+
+            msg = takeMsg()
+
+            hrs = takeHrs()
+
+            mins = takeMins()
+
+            speak(f"Message will be sent at {hrs}hours and {mins}minutes")
+            try:
+                pywhatkit.sendwhatmsg(phno, msg, hrs, mins)
+                speak(f"Message has been sent successfully")
+                exit()  #Remove this to run the program contineously
+            except Exception:
+                speak("I am unable to send the message. Might be network issue.")
+
+            speak("Can I do anything else for you?")
+            continue
+            
+
+        elif "exit" in query:
+            speak(f"Thank you {uname}. I am at your service any time.")
+            exit()  #exits / stops the program execution
